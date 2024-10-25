@@ -81,10 +81,16 @@ class SchemaValidator
                 if (!$attribute->isMultiValued()) {
                     $validationResult->add($propertyName, $parentPath, $schemaId, 'Attribute is not defined in schema as multi-valued, but got array');
                     continue;
-                } else {
-                    foreach ($value as $item) {
-                        $this->validateByAttributes($item, $schemaId, $attribute->getSubAttributes(), [], $validationResult, $propertyName);
+                }
+                foreach ($value as $item) {
+                    if (!is_array($item)) {
+                        if (!$attribute->isValueValid($item)) {
+                            $validationResult->add($propertyName, $parentPath, $schemaId, sprintf('Attribute has invalid value for type "%s"', $attribute->getType()));
+                        }
+                        continue;
                     }
+
+                    $this->validateByAttributes($item, $schemaId, $attribute->getSubAttributes(), [], $validationResult, $propertyName);
                 }
             } elseif ($this->isObject($value)) {
                 if ($attribute->isMultiValued()) {

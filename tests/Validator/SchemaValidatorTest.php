@@ -44,6 +44,15 @@ class SchemaValidatorTest extends TestCase
         $this->assertEquals([], $result->getErrorsAsStrings());
     }
 
+    public function test_list()
+    {
+        $schema = new Schema('customUser');
+        $schema->addAttribute(AttributeBuilder::create('tags', ScimConstants::ATTRIBUTE_TYPE_STRING)
+            ->setMultiValued(true)->getAttribute(),
+        );
+        $this->assertEmpty($this->validator->validate(['tags' => ['foo']], $schema)->getErrors());
+    }
+
     public function test_enterprise_user_full()
     {
         $result = $this->validator->validate(
