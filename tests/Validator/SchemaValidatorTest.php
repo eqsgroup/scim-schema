@@ -53,6 +53,16 @@ class SchemaValidatorTest extends TestCase
         $this->assertEmpty($this->validator->validate(['tags' => ['foo']], $schema)->getErrors());
     }
 
+    /**
+     * @testWith [{"nickName": null}, []]
+     *           [{"nickName": "null"}, []]
+     *           [{"userName": null}, ["[userName] Attribute has invalid value for type \"string\" [urn:ietf:params:scim:schemas:core:2.0:User]"]]
+     */
+    public function test_unassigned_value(array $data, array $expected)
+    {
+        $this->assertEquals($expected, $this->validator->validate($data, $this->schemaBuilder->getUser())->getErrorsAsStrings());
+    }
+
     public function test_enterprise_user_full()
     {
         $result = $this->validator->validate(

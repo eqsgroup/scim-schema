@@ -208,6 +208,11 @@ class Attribute implements SerializableInterface
 
     public function isValueValid($value)
     {
+        // https://datatracker.ietf.org/doc/html/rfc7643#section-2.5
+        if (!$this->required && in_array($value, [null, [], 'null'], true)) {
+            return true;
+        }
+
         switch ($this->type) {
             case ScimConstants::ATTRIBUTE_TYPE_STRING: return is_string($value);
             case ScimConstants::ATTRIBUTE_TYPE_BOOLEAN: return is_bool($value);
